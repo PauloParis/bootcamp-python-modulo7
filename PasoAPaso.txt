@@ -1,0 +1,147 @@
+
+--EN ESTE APARTADO SE ENCUENTRA EL PASO A PASO REALIZADO PARA COMPLETAR LA ACTIVIDAD
+--ESTÁ SECCIONADO SEGÚN LAS 5 PARTES ESPECIFICADAS EN EL ENUNCIADO
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------PARTE 1-----------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+------------Parte 1 - DB------------
+
+--crear usuario
+create user userdjango with password 'userdjango';
+alter user userdjango createdb createrole superuser;
+\du -> comprobar
+
+--crear db
+create database db_final_orm;
+
+
+------Parte 1 - Crear Proyecto------
+
+--Crear entorno virtual
+py -m venv django-env 
+django-env\Scripts\activate
+
+--Dependencias
+py -m pip install Django==4.1.1
+py -m pip install psycopg2-binary
+
+--Crear proyecto django
+django-admin startproject config
+cd config
+py manage.py startapp laboratorio
+py manage.py migrate 
+
+
+----------Crear super user-----------
+
+py manage.py createsuperuser
+username: admin
+email: admin@admin.com
+password: admin
+repassword: admin
+bypass password validation......[y/N]: y
+
+
+--migrar
+py manage.py makemigrations
+py manage.py migrate 
+
+
+----------Modelos realizados en la parte 1-----------
+
+from django.db import models
+from django.core.exceptions import ValidationError
+
+class Laboratorio(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+    
+class DirectorGeneral(models.Model):
+    nombre = models.CharField(max_length=100)
+    laboratorio = models.OneToOneField(Laboratorio, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nombre
+    
+def validar_anio(value):
+    if value < 2015:
+        raise ValidationError(('La fecha de fabricación debe ser a partir de 2015'))
+
+class Producto(models.Model):
+    nombre = models.CharField(max_length=100)
+    laboratorio = models.ForeignKey(Laboratorio, on_delete=models.CASCADE)
+    f_fabricacion = models.IntegerField(validators=[validar_anio])
+    p_costo = models.DecimalField(max_digits=10, decimal_places=2)
+    p_venta = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.nombre
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------PARTE 2-----------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+--Configurar archivo admin.py
+--Actividad realizada en el sitio administrativo de django
+
+
+-----------Parte 2 - shell------------
+
+--importar modelos
+from laboratorio.models import Laboratorio, DirectorGeneral, Producto
+
+--obtener todos los objetos de Laboratorio, DirectorGeneral, Producto
+laboratorios = Laboratorio.objects.all()
+directores = DirectorGeneral.objects.all()
+productos = Producto.objects.all()
+
+print(laboratorios)
+print(directores)
+print(productos)
+
+--obtener el Laboratorio del producto que sea = 'Producto 1'
+producto = Producto.objects.get(nombre='Producto 1')
+lab_producto1 = producto.laboratorio
+print(lab_producto1)
+
+--Ordene todos los productos por nombre, y que muestre los valores de nombre y
+laboratorio
+prod_ordenados = Producto.objects.order_by('nombre')
+for item in prod_ordenados: print(f"{item.nombre}, {item.laboratorio}")
+
+--Realice una consulta que imprima por pantalla los laboratorios de todos los productos
+for item in productos: print(f"{item.laboratorio}")
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------PARTE 3-----------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+--actualización de modelos en el archivo models.py
+
+--migraciones para actualizar modelos
+
+py manage.py makemigrations
+py manage.py migrate
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------PARTE 4-----------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+-Actividad que se puede revisar en la totalidad del codigo y su funcionamiento
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------PARTE 5-----------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+--Actividad realizada en el archivo tests.py

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Laboratorio</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'custom.css' %}">
+</head>
+<body>
+    <h1>
+        <center>Actualizar Laboratorio</center>
+    </h1>
+
+    <div class="container">
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="div">
+                <label for="nombre"><Strong>Nombre:</Strong></label>
+                {{formLaboratorio.nombre}}
+            </div>
+            <div class="div">
+                <label for="ciudad"><Strong>Ciudad:</Strong></label>
+                {{formLaboratorio.ciudad}}
+            </div>
+            <div class="div">
+                <label for="pais"><Strong>País:</Strong></label>
+                {{formLaboratorio.pais}}
+            </div>
+            <div class="div">
+                <button type="submit">Enviar</button>
+            </div>
+        </form>
+    </div>
+
+    <p>¿Información de los Laboratorios?</p>
+    <a href="{% url 'informacion' %}">Ir a información de los laboratorios -></a>
+</body>
+</html>
